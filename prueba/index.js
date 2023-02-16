@@ -3,7 +3,6 @@ var inputElem = null;
 var resultsElem = null;
 var activeIndex = 0;
 var filteredResults = [];
-const data = null;
 
 function init() { 
   var response = new XMLHttpRequest();
@@ -12,13 +11,10 @@ function init() {
   response.onreadystatechange = function(){
     if (this.readyState == 4 && this.status == 200) {
       // La respuesta, aunque sea JSON, viene en formato texto, por lo que tendremos que hace run parse
-      console.log(JSON.parse(response.responseText));
+      console.log(JSON.parse(response.responseText).data);
     }
   }
-  
-  response.open("GET", "https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=es&namePrefix= "+data+"&languageCode=es  ",true);
-
-  
+  response.open("GET", "https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=es&nameprefix="+inputElem,true);
 
   response.setRequestHeader("X-RapidAPI-Key", "cf9f7b5797msh5d2987647ab6472p11c3aajsn077638b1ea7a");
   response.setRequestHeader("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
@@ -26,10 +22,9 @@ function init() {
   resultsElem = document.querySelector("ul");
   inputElem = document.querySelector("input");
 
-  resultsElem.addEventListener("click", (event) => {  
-    data = handleResultClick(event);
+  resultsElem.addEventListener("click", (event) => {
+    handleResultClick(event);
   });
-  
   inputElem.addEventListener("input", (event) => {
     autocomplete(event);
   });
@@ -46,7 +41,13 @@ function autocomplete(event) {
     inputElem.value = "";
     return;
   }
+
   filteredResults = ciudades.filter((ciudades) => {
+    
+    for (let index = 0; index < array.length; index++) {
+      ciudades[index] = ;
+      
+    } 
     return ciudades.data.name.toLowerCase().startsWith(value.toLowerCase());
   }).slice(0,5);
 
