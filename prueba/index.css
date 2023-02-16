@@ -19,7 +19,7 @@
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     position: relative;
   }
-  input, button {
+  input {
     border: none;
     background: white;
     margin: 0;
@@ -28,17 +28,8 @@
     font-size: 16px;
     padding: 10px 12px;
   }
-  button {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  svg {
-    width: 18px;
-    height: 18;
-    fill: black;
-  }
+  
+
   ul {
     position: absolute;
     top: 100%;

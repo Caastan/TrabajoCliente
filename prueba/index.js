@@ -1,26 +1,42 @@
-var countries = [];
+var ciudades = [];
 var inputElem = null;
 var resultsElem = null;
 var activeIndex = 0;
 var filteredResults = [];
+const data = null;
 
-function init() {
-  fetch("https://public.opendatasoft.com/explore/dataset/provincias-espanolas/table/?sort=provincia")
-    .then((response) => response.json())
-    .then((data) => (countries = data));
+function init() { 
+  var response = new XMLHttpRequest();
+  
 
+  response.onreadystatechange = function(){
+    if (this.readyState == 4 && this.status == 200) {
+      // La respuesta, aunque sea JSON, viene en formato texto, por lo que tendremos que hace run parse
+      console.log(JSON.parse(response.responseText));
+    }
+  }
+  
+  response.open("GET", "https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=es&namePrefix= "+data+"&languageCode=es  ",true);
+
+  
+
+  response.setRequestHeader("X-RapidAPI-Key", "cf9f7b5797msh5d2987647ab6472p11c3aajsn077638b1ea7a");
+  response.setRequestHeader("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
+  
   resultsElem = document.querySelector("ul");
   inputElem = document.querySelector("input");
 
-  resultsElem.addEventListener("click", (event) => {
-    handleResultClick(event);
+  resultsElem.addEventListener("click", (event) => {  
+    data = handleResultClick(event);
   });
+  
   inputElem.addEventListener("input", (event) => {
     autocomplete(event);
   });
   inputElem.addEventListener("keyup", (event) => {
     handleResultKeyDown(event);
   });
+  response.send(null);
 }
 
 function autocomplete(event) {
@@ -30,9 +46,9 @@ function autocomplete(event) {
     inputElem.value = "";
     return;
   }
-  filteredResults = countries.filter((country) => {
-    return country.name.common.toLowerCase().startsWith(value.toLowerCase());
-  });   
+  filteredResults = ciudades.filter((ciudades) => {
+    return ciudades.data.name.toLowerCase().startsWith(value.toLowerCase());
+  }).slice(0,5);
 
   resultsElem.innerHTML = filteredResults
     .map((result, index) => {
@@ -119,10 +135,7 @@ function selectItem(node) {
   }
 }
 
-function hideResults() {
-  this.resultsElem.innerHTML = "";
-  this.resultsElem.classList.add("hidden");
-}
+
 
 function getItemAt(index) {
   return this.resultsElem.querySelector(`#autocomplete-result-${index}`)
