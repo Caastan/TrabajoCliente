@@ -41,44 +41,74 @@ function initBuscador() {
 }
 
 function autocomplete(){
-  //Se inicializa el objeto XMLHttpRequest para pode hacer peticiones GET o POST en este método
-  var response = new XMLHttpRequest(); 
-  
-  //Se le dan los valores correspondientes proporcionados por la api 
-  response.open("GET", "https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=ES&languageCode=ES&namePrefix=" + inputElem.value, true);
-  response.setRequestHeader("X-RapidAPI-Key", "d09b696da1msh0c7656a4f8facf8p17a5c7jsn6dd9277499f6");
-  response.setRequestHeader("X-RapidAPI-Host", "wft-geo-db.p.rapidapi.com");
-  response.send();
-  inputElem = document.querySelector("input");
-  
-  //Y con esta funcion lo que se va a hacer es que cada vez que haya un cambio en el html se recargue y haga toda la funcionalidad de este
-  response.onreadystatechange = function (){
-   if (this.readyState == 4 && this.status == 200) {
-    //La respuesta, aunque sea JSON, viene en formato texto, por lo que tendremos que hacer un parseo
-    var nombres = JSON.parse(response.responseText).data;
-        if ((nombres =! null) || (nombres =! "")) {
-           for (let index = 0; index <= 4; index++) {
-              // Guardo en una variable todas las rows con el nombre de la ciudad
-              lista += "<li role='option'> "+JSON.parse(response.responseText).data[index]['name']+" </li>"; 
-              //Aqui guardo en las cuatro variable todos los datos para después compararlos
-              ciudades[index] = JSON.parse(response.responseText).data[index]['name'];
-              poblacion[index] = JSON.parse(response.responseText).data[index]['population'];
-              latitud[index] = JSON.parse(response.responseText).data[index]['latitude'];
-              longitud[index] = JSON.parse(response.responseText).data[index]['longitude'];
+  // Verificar si se han realizado búsquedas previas para este prefijo
+  var cachedResult = localStorage.getItem(inputElem.value);
+  if (cachedResult !== null) {
+    // Si hay resultados en caché, mostrarlos
+    resultsElem.innerHTML = cachedResult;
+    resultsElem.classList.remove("hidden");
+    return;
+  }
 
-            }
-        }else{
-          //Son excepciones por si no se encuentra o dan error
-             lista = "Busqueda no encontrada"
-            }  
-             resultsElem.innerHTML = lista;
-             resultsElem.classList.remove("hidden");
-            }else if(this.status == 429){  
-             console.log('Demasiadas solicitudes');  
-            }  
+  // Inicializar el objeto XMLHttpRequest para hacer la petición al servidor
+  var response = new XMLHttpRequest();
+
+  // Hacer la petición al servidor con el prefijo proporcionado por el usuario
+  response.open(
+    "GET",
+    "https://wft-geo-db.p.rapidapi.com/v1/geo/cities?countryIds=ES&languageCode=ES&namePrefix=" +
+      inputElem.value,
+    true
+  );
+  response.setRequestHeader(
+    "X-RapidAPI-Key",
+    "cf9f7b5797msh5d2987647ab6472p11c3aajsn077638b1ea7a"
+  );
+  response.setRequestHeader(
+    "X-RapidAPI-Host",
+    "wft-geo-db.p.rapidapi.com"
+  );
+  
+  response.send();
+
+  // Manejar la respuesta del servidor
+  response.onreadystatechange = function () {
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        // Parsear la respuesta JSON y verificar que contiene la propiedad "data"
+        var responseJson = JSON.parse(response.responseText);
+        if (responseJson.hasOwnProperty("data")) {
+          // Iterar sobre los resultados y guardarlos en variables
+          var nombres = responseJson.data;
+          var lista = "";
+          for (let index = 0; index <= 4 && index < nombres.length; index++) {
+            lista +=
+              "<li role='option'> " +
+              nombres[index]["name"] +
+              " </li>";
+            ciudades[index] = nombres[index]["name"];
+            poblacion[index] = nombres[index]["population"];
+            latitud[index] = nombres[index]["latitude"];
+            longitud[index] = nombres[index]["longitude"];
+          }
+
+          // Mostrar los resultados y guardarlos en caché
+          resultsElem.innerHTML = lista;
+          resultsElem.classList.remove("hidden");
+          localStorage.setItem(inputElem.value, lista);
+        } else {
+          // La respuesta no contiene la propiedad "data"
+          console.log("La respuesta del servidor es inválida");
         }
-        
+      } else if (this.status == 429) {
+        console.log("Demasiadas solicitudes");
+      } else {
+        console.log("Error al realizar la solicitud");
       }
+    }
+  };
+}
+      
 
 //Metodo para que cuando el usuario haga click llame a otro para guardar las variables de la ciudad.
 function handleResultClick() {
@@ -171,8 +201,8 @@ function selectItem(node) {
         latitude = latitud[index];
         longitude = longitud[index];
     }
-  }
-  
+  } 
+  return population;
 }
 
 
@@ -184,27 +214,25 @@ function getItemAt(index) {
 initBuscador();
 
 
-function initmapa(){
-  //Evento para que cuando se haga click en el boton ser haga una petición en la que se pueda ver el mapa.
-  buttonElem.addEventListener("submit", (event) => {
 
-  });
-}
-
-
-  	 function initMap() {
-      document.write("<h2>"+ciudad+"</h2><br><br><h2>"+population+"</h2><br><br>");
+		
+    
+   function initMap() {
+    console.log(node);
       map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: latitude, lng: longitude},
-        zoom: 13
-        });
-        var marker = new google.maps.Marker({
-          position: {lat: latitude, lng: longitude},
-          map: map,
-          title: ciudad
-        });
-      }
+    center: {lat: latitude, lng: longitude},
+        zoom: 13,
+      });
+      var marker = new google.maps.Marker({
+        position: {lat: latitude, lng: longitude},
+        map: map,
+      title: 'Acuario de Gijón'
+      });
+      
+    }
+
+    
 
 
 
-initMap(); 
+
