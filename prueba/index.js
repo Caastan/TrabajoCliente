@@ -195,14 +195,17 @@ function selectItem(node) {
   }
 
   //En este for comparo a ver si la ciudad seleccionada en el input es la misma y si lo es me guarda en otra variable los datos
-  for (let index = 0; index <= 4; index++) {
+  
     if (inputElem.value == ciudades[index]){
         population = poblacion[index];
         latitude = latitud[index];
         longitude = longitud[index];
-    }
+        
+    
   } 
-  return population;
+
+  console.log(latitude,longitude)
+  initMap(latitude,longitude);
 }
 
 
@@ -212,15 +215,10 @@ function getItemAt(index) {
 }
 
 initBuscador();
-
-
-
-		
-    
-   function initMap() {
-    console.log(node);
+ 
+   function initMap(latitude,longitude) {
       map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: latitude, lng: longitude},
+      center: {lat: latitude, lng: longitude},
         zoom: 13,
       });
       var marker = new google.maps.Marker({
@@ -230,9 +228,3 @@ initBuscador();
       });
       
     }
-
-    
-
-
-
-

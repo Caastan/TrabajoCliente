@@ -2,8 +2,8 @@
     border-sizing: border-box;
   }
   html, body {
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
     margin: 0;
     padding: 0;
   }
@@ -57,13 +57,3 @@
   .hidden {
     display: none;
   }
-
-  #map {
-    height: 100%;
-    }
- 
-    html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    }
